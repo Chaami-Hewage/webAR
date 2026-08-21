@@ -315,30 +315,14 @@
       </div>
     </div>
 
-    <!-- Central Hero Card -->
-    <div id="hero-card-wrapper">
+    <!-- Desktop QR Code Only -->
+    <div id="hero-card-wrapper" class="desktop-only">
       <div class="hero-card">
         <h2>Call The Magician</h2>
-        
-        <div class="desktop-only">
-          <p style="margin-bottom: 8px;">Scan the QR code with your <strong>Phone Camera</strong> to open WebAR on your phone!</p>
-          <div style="margin: 8px 0; background: #ffffff; padding: 8px; border-radius: 12px; display: inline-block;">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://chaami-hewage.github.io/webAR/" alt="Scan to open WebAR on Phone" style="width: 140px; height: 140px; display: block; margin: 0 auto;">
-          </div>
-          <p style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 8px;">Point your phone camera at the <strong>Hiro Marker</strong> below:</p>
-          <div style="margin: 0 0 12px 0; background: #ffffff; padding: 8px; border-radius: 12px; display: inline-block;">
-            <img id="hiro-preview" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
-              alt="Hiro Marker Target"
-              style="width: 140px; height: 140px; display: block; margin: 0 auto; border: 2px solid #000;">
-          </div>
+        <p style="margin-bottom: 8px;">Scan the QR code with your <strong>Phone Camera</strong> to open WebAR on your phone!</p>
+        <div style="margin: 8px 0; background: #ffffff; padding: 8px; border-radius: 12px; display: inline-block;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://chaami-hewage.github.io/webAR/" alt="Scan to open WebAR on Phone" style="width: 140px; height: 140px; display: block; margin: 0 auto;">
         </div>
-
-        <div class="mobile-only">
-          <p style="margin-bottom: 16px;">Point your camera at the <strong>Hiro Marker</strong> on your laptop screen!</p>
-        </div>
-
-        <br>
-        <button id="btn-begin" class="btn-gold" onclick="dismissHeroCard()">Begin AR Session</button>
       </div>
     </div>
 
@@ -363,26 +347,26 @@
     <a-entity light="type: directional; color: #ffd700; intensity: 2.0; castShadow: true" position="2 4 2"></a-entity>
     <a-entity light="type: directional; color: #ff8c00; intensity: 1.0" position="-2 2 -2"></a-entity>
 
-    <!-- Hiro Marker Target -->
-    <a-marker preset="hiro" id="hiro-marker">
-      <!-- 1. Gold Pedestal Ring -->
-      <a-cylinder position="0 0 0" radius="1.0" height="0.08" color="#d4af37" opacity="0.8"
-        material="metalness: 0.9; roughness: 0.1; emissive: #d4af37; emissiveIntensity: 0.2"></a-cylinder>
+    <!-- Direct 3D Content (Always Visible in Camera View) -->
+    <!-- 1. Gold Pedestal Ring -->
+    <a-cylinder position="0 -0.8 -2.5" radius="0.9" height="0.08" color="#d4af37" opacity="0.85"
+      material="metalness: 0.9; roughness: 0.1; emissive: #d4af37; emissiveIntensity: 0.3">
+    </a-cylinder>
 
-      <!-- 2. Vibrant Magenta Holographic Cube (as seen in reference image) -->
-      <a-box position="0 0.6 0" width="0.8" height="0.8" depth="0.8" color="#ff007f" opacity="0.75"
-        material="transparent: true; metalness: 0.5; roughness: 0.2;"
-        animation="property: rotation; to: 0 360 360; loop: true; dur: 8000; easing: linear">
-      </a-box>
+    <!-- 2. Vibrant Magenta Holographic Cube (matching reference image) -->
+    <a-box position="0 -0.2 -2.5" width="1.1" height="1.1" depth="1.1" color="#ff007f" opacity="0.65"
+      material="transparent: true; metalness: 0.5; roughness: 0.2;"
+      animation="property: rotation; to: 0 360 360; loop: true; dur: 8000; easing: linear">
+    </a-box>
 
-      <!-- 3. 3D Magician Entity ('Little Man by Don Carson') -->
-      <a-entity id="magician" gltf-model="#littleManModel" scale="2.0 2.0 2.0" position="0 0.1 0" rotation="0 0 0"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
-      </a-entity>
+    <!-- 3. 3D Magician Entity ('Little Man by Don Carson') -->
+    <a-entity id="magician" gltf-model="#littleManModel" scale="2.2 2.2 2.2" position="0 -0.75 -2.5" rotation="0 0 0"
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+    </a-entity>
 
-      <!-- Glowing Light Source directly on Marker -->
-      <a-light type="point" color="#ff007f" intensity="2" distance="3" position="0 1 0"></a-light>
-    </a-marker>
+    <!-- Glowing Magenta Light Source -->
+    <a-light type="point" color="#ff007f" intensity="2.5" distance="4" position="0 0.5 -2"></a-light>
+
 
     <!-- AR Camera -->
     <a-entity camera></a-entity>
