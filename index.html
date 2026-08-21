@@ -354,14 +354,23 @@
 
     <!-- Hiro Marker Target -->
     <a-marker preset="hiro" id="hiro-marker">
-      <!-- Pedestal / Base ring -->
-      <a-cylinder position="0 0 0" radius="0.8" height="0.05" color="#d4af37" opacity="0.6"
-        material="metalness: 0.8; roughness: 0.2"></a-cylinder>
+      <!-- 1. Gold Pedestal Ring -->
+      <a-cylinder position="0 0 0" radius="1.0" height="0.08" color="#d4af37" opacity="0.8"
+        material="metalness: 0.9; roughness: 0.1; emissive: #d4af37; emissiveIntensity: 0.2"></a-cylinder>
 
-      <!-- 3D Magician Entity -->
-      <a-entity id="magician" gltf-model="#littleManModel" scale="1.5 1.5 1.5" position="0 0.05 0" rotation="0 0 0"
+      <!-- 2. Vibrant Magenta Holographic Cube (as seen in reference image) -->
+      <a-box position="0 0.6 0" width="0.8" height="0.8" depth="0.8" color="#ff007f" opacity="0.75"
+        material="transparent: true; metalness: 0.5; roughness: 0.2;"
+        animation="property: rotation; to: 0 360 360; loop: true; dur: 8000; easing: linear">
+      </a-box>
+
+      <!-- 3. 3D Magician Entity ('Little Man by Don Carson') -->
+      <a-entity id="magician" gltf-model="#littleManModel" scale="2.0 2.0 2.0" position="0 0.1 0" rotation="0 0 0"
         animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
       </a-entity>
+
+      <!-- Glowing Light Source directly on Marker -->
+      <a-light type="point" color="#ff007f" intensity="2" distance="3" position="0 1 0"></a-light>
     </a-marker>
 
     <!-- AR Camera -->
