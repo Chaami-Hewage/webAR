@@ -48,16 +48,17 @@
       color: #ffffff;
     }
 
-    /* Force AR.js video background to render underneath UI overlay */
+    /* Ensure AR.js camera video fills mobile viewport properly */
     #arjs-video, video {
-      position: absolute !important;
+      position: fixed !important;
       top: 0 !important;
       left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
+      width: 100vw !important;
+      height: 100vh !important;
       object-fit: cover !important;
-      z-index: -1 !important;
+      z-index: -2 !important;
     }
+
 
     /* UI Overlay Layer */
     #ui-container {
@@ -334,9 +335,11 @@
   </div>
 
   <!-- A-Frame WebAR Scene -->
-  <a-scene embedded id="ar-scene"
+  <a-scene embedded 
+    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false; trackingMethod: best; detectionMode: mono;"
     vr-mode-ui="enabled: false" 
     renderer="logarithmicDepthBuffer: true; colorManagement: true; antialias: true;">
+
 
     <!-- Asset Management -->
     <a-assets timeout="10000">
