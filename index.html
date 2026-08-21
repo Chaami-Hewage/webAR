@@ -311,16 +311,23 @@
     <div id="hero-card-wrapper">
       <div class="hero-card">
         <h2>Call The Magician</h2>
-        <p>Open this page on your <strong>mobile phone</strong>, tap "Begin Session", and point your phone camera at the
-          <strong>Hiro Marker</strong> below (or display it on your laptop screen)!</p>
-
-        <div style="margin: 16px 0; background: #ffffff; padding: 12px; border-radius: 12px; display: inline-block;">
-          <img id="hiro-preview" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
-            alt="Hiro Marker Target"
-            style="width: 160px; height: 160px; display: block; margin: 0 auto; border: 2px solid #000;">
+        <p style="margin-bottom: 12px;">Scan the QR code with your <strong>Phone Camera</strong> to open WebAR on your phone!</p>
+        
+        <!-- Generated QR Code linking directly to live app -->
+        <div style="margin: 12px 0; background: #ffffff; padding: 10px; border-radius: 12px; display: inline-block;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://chaami-hewage.github.io/webAR/" alt="Scan to open WebAR on Phone" style="width: 150px; height: 150px; display: block; margin: 0 auto;">
         </div>
 
-        <button id="btn-begin" class="btn-gold" onclick="dismissHeroCard()">Begin Session</button>
+        <p style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 16px;">Then point your phone camera at the <strong>Hiro Marker</strong> below:</p>
+
+        <div style="margin: 0 0 16px 0; background: #ffffff; padding: 10px; border-radius: 12px; display: inline-block;">
+          <img id="hiro-preview" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
+            alt="Hiro Marker Target"
+            style="width: 140px; height: 140px; display: block; margin: 0 auto; border: 2px solid #000;">
+        </div>
+
+        <br>
+        <button id="btn-begin" class="btn-gold" onclick="dismissHeroCard()">Begin Session (On Phone)</button>
       </div>
     </div>
 
