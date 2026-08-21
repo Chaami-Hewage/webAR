@@ -228,8 +228,16 @@
       font-size: 0.95rem;
       color: #d1d5db;
       line-height: 1.6;
-      margin-bottom: 28px;
       font-weight: 300;
+    }
+
+    /* Responsive visibility toggles */
+    .desktop-only { display: block; }
+    .mobile-only { display: none; }
+
+    @media (max-width: 768px) {
+      .desktop-only { display: none !important; }
+      .mobile-only { display: block !important; }
     }
 
     .btn-gold {
@@ -311,23 +319,26 @@
     <div id="hero-card-wrapper">
       <div class="hero-card">
         <h2>Call The Magician</h2>
-        <p style="margin-bottom: 12px;">Scan the QR code with your <strong>Phone Camera</strong> to open WebAR on your phone!</p>
         
-        <!-- Generated QR Code linking directly to live app -->
-        <div style="margin: 12px 0; background: #ffffff; padding: 10px; border-radius: 12px; display: inline-block;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://chaami-hewage.github.io/webAR/" alt="Scan to open WebAR on Phone" style="width: 150px; height: 150px; display: block; margin: 0 auto;">
+        <div class="desktop-only">
+          <p style="margin-bottom: 8px;">Scan the QR code with your <strong>Phone Camera</strong> to open WebAR on your phone!</p>
+          <div style="margin: 8px 0; background: #ffffff; padding: 8px; border-radius: 12px; display: inline-block;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://chaami-hewage.github.io/webAR/" alt="Scan to open WebAR on Phone" style="width: 140px; height: 140px; display: block; margin: 0 auto;">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 8px;">Point your phone camera at the <strong>Hiro Marker</strong> below:</p>
+          <div style="margin: 0 0 12px 0; background: #ffffff; padding: 8px; border-radius: 12px; display: inline-block;">
+            <img id="hiro-preview" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
+              alt="Hiro Marker Target"
+              style="width: 140px; height: 140px; display: block; margin: 0 auto; border: 2px solid #000;">
+          </div>
         </div>
 
-        <p style="font-size: 0.8rem; color: var(--gold-light); margin-bottom: 16px;">Then point your phone camera at the <strong>Hiro Marker</strong> below:</p>
-
-        <div style="margin: 0 0 16px 0; background: #ffffff; padding: 10px; border-radius: 12px; display: inline-block;">
-          <img id="hiro-preview" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png"
-            alt="Hiro Marker Target"
-            style="width: 140px; height: 140px; display: block; margin: 0 auto; border: 2px solid #000;">
+        <div class="mobile-only">
+          <p style="margin-bottom: 16px;">Point your camera at the <strong>Hiro Marker</strong> on your laptop screen!</p>
         </div>
 
         <br>
-        <button id="btn-begin" class="btn-gold" onclick="dismissHeroCard()">Begin Session (On Phone)</button>
+        <button id="btn-begin" class="btn-gold" onclick="dismissHeroCard()">Begin AR Session</button>
       </div>
     </div>
 
