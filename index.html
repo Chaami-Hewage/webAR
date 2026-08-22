@@ -354,13 +354,11 @@
     </footer>
   </div>
 
-  <!-- A-Frame WebAR Scene -->
+  <!-- A-Frame WebAR Scene (Markerless Screen AR) -->
   <a-scene embedded 
-    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false; trackingMethod: best; detectionMode: mono;"
+    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;"
     vr-mode-ui="enabled: false" 
     renderer="alpha: true; logarithmicDepthBuffer: true; colorManagement: true; antialias: true;">
-
-
 
     <!-- Asset Management -->
     <a-assets timeout="10000">
@@ -368,69 +366,135 @@
     </a-assets>
 
     <!-- Ambient & Warm Directional Lighting -->
-    <a-entity light="type: ambient; color: #fff5e6; intensity: 1.5"></a-entity>
-    <a-entity light="type: directional; color: #ffd700; intensity: 2.0; castShadow: true" position="2 4 2"></a-entity>
-    <a-entity light="type: directional; color: #ff8c00; intensity: 1.0" position="-2 2 -2"></a-entity>
+    <a-entity light="type: ambient; color: #fff5e6; intensity: 1.8"></a-entity>
+    <a-entity light="type: directional; color: #ffd700; intensity: 2.2; castShadow: true" position="2 4 2"></a-entity>
+    <a-entity light="type: directional; color: #ff8c00; intensity: 1.2" position="-2 2 -2"></a-entity>
 
-    <!-- Hiro Marker Target (Real AR Tracking in Phone Camera View) -->
-    <a-marker preset="hiro" id="hiro-marker" emitevents="true">
-      <!-- 1. Gold Pedestal Ring -->
-      <a-cylinder position="0 0 0" radius="1.2" height="0.08" color="#d4af37" opacity="0.9"
-        material="metalness: 0.9; roughness: 0.1; emissive: #d4af37; emissiveIntensity: 0.4">
+    <!-- Interactive 3D Magician Entity (Direct in Camera View, Gesture Controlled) -->
+    <a-entity id="magician-container" position="0 -0.8 -2.5">
+      <!-- Gold Base Ring -->
+      <a-cylinder position="0 0 0" radius="0.8" height="0.04" color="#d4af37" opacity="0.8"
+        material="metalness: 0.9; roughness: 0.1; emissive: #d4af37; emissiveIntensity: 0.3">
       </a-cylinder>
 
-      <!-- 2. Vibrant Magenta Holographic Cube (matching reference image) -->
-      <a-box position="0 0.8 0" width="1.2" height="1.2" depth="1.2" color="#ff007f" opacity="0.6"
-        material="transparent: true; metalness: 0.5; roughness: 0.2;"
-        animation="property: rotation; to: 0 360 360; loop: true; dur: 8000; easing: linear">
-      </a-box>
-
-      <!-- 3. 3D Magician Entity ('Little Man by Don Carson') -->
-      <a-entity id="magician" gltf-model="#littleManModel" scale="1.2 1.2 1.2" position="0 0.1 0" rotation="0 0 0"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+      <!-- 3D Magician -->
+      <a-entity id="magician" gltf-model="#littleManModel" scale="1.5 1.5 1.5" position="0 0.05 0" rotation="0 0 0">
       </a-entity>
 
-      <!-- Glowing Magenta Light Source -->
-      <a-light type="point" color="#ff007f" intensity="3" distance="5" position="0 1 0"></a-light>
-    </a-marker>
+      <!-- Warm Golden Light Glow -->
+      <a-light type="point" color="#ffd700" intensity="2" distance="4" position="0 1 0"></a-light>
+    </a-entity>
 
     <!-- AR Camera -->
     <a-entity camera></a-entity>
   </a-scene>
 
+  <!-- Interactive Gesture Controls Script (Touch drag to move/rotate, pinch to scale) -->
   <script>
-    function dismissHeroCard() {
-      const heroCard = document.getElementById('hero-card-wrapper');
-      if (heroCard) {
-        heroCard.classList.add('dismissed');
+    const magicianContainer = document.getElementById('magician-container');
+    const magician = document.getElementById('magician');
+
+    let isDragging = false;
+    let previousTouchX = 0;
+    let previousTouchY = 0;
+    let initialPinchDistance = null;
+    let currentScale = 1.5;
+    let currentRotationY = 0;
+    let posX = 0;
+    let posY = -0.8;
+
+    // Auto rotate toggle variable
+    let autoRotate = true;
+
+    function animateAutoRotate() {
+      if (autoRotate && magician) {
+        currentRotationY += 0.5;
+        magician.setAttribute('rotation', `0 ${currentRotationY} 0`);
       }
+      requestAnimationFrame(animateAutoRotate);
     }
+    animateAutoRotate();
 
-    // Device detection & AR initialization
-    window.addEventListener('DOMContentLoaded', () => {
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-      const scene = document.getElementById('ar-scene');
-
-      if (isMobile && scene) {
-        // Enable mobile back camera in AR.js dynamically
-        scene.setAttribute('arjs', 'sourceType: webcam; facingMode: environment; debugUIEnabled: false; trackingMethod: best; detectionMode: mono;');
+    // Touch Event Listeners for Mobile & Laptop Mouse
+    window.addEventListener('touchstart', (e) => {
+      autoRotate = false; // pause auto rotation when user interacts
+      if (e.touches.length === 1) {
+        isDragging = true;
+        previousTouchX = e.touches[0].clientX;
+        previousTouchY = e.touches[0].clientY;
+      } else if (e.touches.length === 2) {
+        // Pinch zoom start
+        initialPinchDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
       }
+    });
 
-      const marker = document.getElementById('hiro-marker');
-      const reticleBox = document.querySelector('.reticle-box');
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging) {
+        const deltaX = e.touches[0].clientX - previousTouchX;
+        const deltaY = e.touches[0].clientY - previousTouchY;
 
-      if (marker && reticleBox) {
-        marker.addEventListener('markerFound', () => {
-          reticleBox.style.borderColor = '#00ff88';
-          reticleBox.style.boxShadow = '0 0 20px rgba(0,255,136,0.6)';
-        });
-        marker.addEventListener('markerLost', () => {
-          reticleBox.style.borderColor = 'var(--gold-primary)';
-          reticleBox.style.boxShadow = '0 0 15px var(--gold-glow), inset 0 0 15px var(--gold-glow)';
-        });
+        // One-finger drag: Rotate horizontally, shift vertically
+        currentRotationY += deltaX * 0.5;
+        posY -= deltaY * 0.003;
+
+        // Clamp Y position within comfortable view
+        posY = Math.max(-2.0, Math.min(1.0, posY));
+
+        magician.setAttribute('rotation', `0 ${currentRotationY} 0`);
+        magicianContainer.setAttribute('position', `${posX} ${posY} -2.5`);
+
+        previousTouchX = e.touches[0].clientX;
+        previousTouchY = e.touches[0].clientY;
+      } else if (e.touches.length === 2 && initialPinchDistance) {
+        // Two-finger pinch: Scale 3D Magician
+        const newPinchDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = newPinchDistance / initialPinchDistance;
+
+        currentScale = Math.max(0.4, Math.min(4.0, currentScale * factor));
+        magician.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+
+        initialPinchDistance = newPinchDistance;
       }
+    });
+
+    window.addEventListener('touchend', (e) => {
+      if (e.touches.length === 0) {
+        isDragging = false;
+        initialPinchDistance = null;
+      }
+    });
+
+    // Laptop Mouse Drag & Scroll Support
+    let isMouseDown = false;
+    let mouseX = 0;
+
+    window.addEventListener('mousedown', (e) => {
+      autoRotate = false;
+      isMouseDown = true;
+      mouseX = e.clientX;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isMouseDown) {
+        const deltaX = e.clientX - mouseX;
+        currentRotationY += deltaX * 0.5;
+        magician.setAttribute('rotation', `0 ${currentRotationY} 0`);
+        mouseX = e.clientX;
+      }
+    });
+
+    window.addEventListener('mouseup', () => { isMouseDown = false; });
+
+    window.addEventListener('wheel', (e) => {
+      currentScale = Math.max(0.4, Math.min(4.0, currentScale + (e.deltaY > 0 ? -0.1 : 0.1)));
+      magician.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
     });
   </script>
 </body>
-
 </html>
