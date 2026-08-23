@@ -5,13 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>Atelier De Magie | WebAR</title>
+  <title>HAUS & ROOM AR | Furniture Room Matcher</title>
+  <meta name="description"
+    content="Check if the J-Toastie designer chair matches your home interior with real-time WebAR visualizer.">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
 
   <!-- A-Frame and AR.js CDN -->
@@ -19,25 +21,24 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 
-
-
   <style>
-    /* Design Tokens */
+    /* Premium Interior & Architectural Design System */
     :root {
-      --bg-dark: #0f0c1d;
-      --gold-primary: #d4af37;
-      --gold-light: #f3e5ab;
-      --gold-glow: rgba(212, 175, 55, 0.4);
-      --glass-bg: rgba(15, 12, 29, 0.75);
-      --glass-border: rgba(212, 175, 55, 0.3);
-      --font-header: 'Cinzel', serif;
-      --font-body: 'Montserrat', sans-serif;
+      --bg-dark: #12100e;
+      --accent-bronze: #d4a373;
+      --accent-warm: #faedcd;
+      --accent-glow: rgba(212, 163, 115, 0.4);
+      --glass-bg: rgba(24, 20, 18, 0.78);
+      --glass-border: rgba(212, 163, 115, 0.28);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body,
@@ -53,7 +54,8 @@
     }
 
     /* Video element inserted by AR.js */
-    video, #arjs-video {
+    video,
+    #arjs-video {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
@@ -76,10 +78,6 @@
       background: transparent !important;
     }
 
-
-
-
-
     /* UI Overlay Layer */
     #ui-container {
       position: fixed;
@@ -93,122 +91,141 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 20px;
+      padding: 16px;
     }
 
-    /* Allow interactive elements to receive clicks */
     .interactive {
       pointer-events: auto;
     }
 
-    /* 1. Header Bar */
+    /* Header Bar */
     header {
       width: 100%;
-      max-width: 480px;
-      padding: 16px 24px;
+      max-width: 520px;
+      padding: 14px 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
+    }
+
+    .brand-info h1 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff 0%, var(--accent-warm) 60%, var(--accent-bronze) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-info p {
+      font-size: 0.72rem;
+      color: #cbd5e1;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-match {
+      background: rgba(212, 163, 115, 0.15);
+      border: 1px solid var(--accent-bronze);
+      color: var(--accent-warm);
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    /* Action Control Toolbar */
+    #toolbar {
+      position: absolute;
+      bottom: 75px;
+      display: flex;
+      gap: 10px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      padding: 8px 14px;
+      border-radius: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .tool-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .tool-btn:hover, .tool-btn.active {
+      background: var(--accent-bronze);
+      color: #12100e;
+      border-color: var(--accent-warm);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Dimensions badge */
+    #dim-badge {
+      position: absolute;
+      top: 85px;
       background: var(--glass-bg);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 15px var(--gold-glow);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--accent-warm);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
-    header h1 {
-      font-family: var(--font-header);
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #ffffff 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 20px var(--gold-glow);
-    }
-
-    /* 2. Target Scanner Reticle (Hidden for markerless AR mode) */
-    #reticle-container {
-      display: none !important;
-    }
-
-
-    .reticle-box {
-      width: 100%;
-      height: 100%;
-      border: 2px dashed var(--gold-primary);
-      border-radius: 16px;
-      box-shadow: 0 0 15px var(--gold-glow), inset 0 0 15px var(--gold-glow);
-      animation: pulse 2.5s infinite ease-in-out;
-      position: relative;
-    }
-
-    .reticle-corner {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      border-color: var(--gold-light);
-      border-style: solid;
-    }
-
-    .top-left {
-      top: -2px;
-      left: -2px;
-      border-width: 3px 0 0 3px;
-      border-top-left-radius: 6px;
-    }
-
-    .top-right {
-      top: -2px;
-      right: -2px;
-      border-width: 3px 3px 0 0;
-      border-top-right-radius: 6px;
-    }
-
-    .bottom-left {
-      bottom: -2px;
-      left: -2px;
-      border-width: 0 0 3px 3px;
-      border-bottom-left-radius: 6px;
-    }
-
-    .bottom-right {
-      bottom: -2px;
-      right: -2px;
-      border-width: 0 3px 3px 0;
-      border-bottom-right-radius: 6px;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 0.6;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 1;
-        transform: scale(1.03);
-      }
-    }
-
-    /* 3. Central Hero Card Overlay */
+    /* Central Desktop Hero Card Overlay */
     #hero-card-wrapper {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 12, 29, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(18, 16, 14, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 20px;
       z-index: 10000;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
       pointer-events: auto;
     }
 
@@ -221,84 +238,111 @@
     .hero-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 36px 28px;
-      max-width: 400px;
+      border-radius: 28px;
+      padding: 32px 24px;
+      max-width: 420px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 30px var(--gold-glow);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px var(--accent-glow);
+    }
+
+    .hero-card .tag {
+      display: inline-block;
+      background: rgba(212, 163, 115, 0.2);
+      color: var(--accent-warm);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
     }
 
     .hero-card h2 {
-      font-family: var(--font-header);
-      font-size: 1.8rem;
-      color: var(--gold-light);
-      margin-bottom: 12px;
-      letter-spacing: 1.5px;
+      font-family: var(--font-heading);
+      font-size: 1.7rem;
+      color: #ffffff;
+      margin-bottom: 10px;
+      line-height: 1.25;
     }
 
     .hero-card p {
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       color: #d1d5db;
-      line-height: 1.6;
+      line-height: 1.5;
       font-weight: 300;
+      margin-bottom: 16px;
     }
 
-    /* Responsive visibility toggles */
-    .desktop-only { display: block; }
+    .qr-box {
+      margin: 10px 0;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 20px;
+      display: inline-block;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .qr-box img {
+      width: 160px;
+      height: 160px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .desktop-only { display: flex; }
     .mobile-only { display: none; }
 
     @media (max-width: 768px) {
       .desktop-only { display: none !important; }
-      .mobile-only { display: block !important; }
+      .mobile-only { display: flex !important; }
     }
 
-    .btn-gold {
-      background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
-      color: #0f0c1d;
+    .btn-primary {
+      background: linear-gradient(135deg, #d4a373 0%, #b88352 100%);
+      color: #12100e;
       font-family: var(--font-body);
       font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: 1px;
+      font-size: 0.95rem;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      padding: 14px 32px;
+      padding: 14px 28px;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 4px 20px var(--gold-glow);
+      box-shadow: 0 4px 20px var(--accent-glow);
       transition: all 0.3s ease;
       width: 100%;
+      margin-top: 14px;
     }
 
-    .btn-gold:hover {
+    .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(212, 175, 55, 0.6);
-      background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 100%);
+      box-shadow: 0 6px 25px rgba(212, 163, 115, 0.6);
+      background: linear-gradient(135deg, #faedcd 0%, #d4a373 100%);
     }
 
-    .btn-gold:active {
-      transform: translateY(1px);
-    }
-
-    /* 4. Footer Attribution */
+    /* Footer Attribution */
     footer {
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       padding: 10px 16px;
       background: var(--glass-bg);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
+      border-radius: 14px;
       text-align: center;
       font-size: 0.75rem;
-      color: #a0aec0;
+      color: #94a3b8;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
     footer a {
-      color: var(--gold-light);
+      color: var(--accent-warm);
       text-decoration: none;
+      font-weight: 500;
       transition: color 0.2s ease;
     }
 
@@ -315,102 +359,177 @@
   <div id="ui-container">
     <!-- Header -->
     <header class="interactive">
-      <h1>Atelier De Magie</h1>
+      <div class="brand-info">
+        <h1>HAUS & ROOM AR</h1>
+        <p>Furniture House Matcher Visualizer</p>
+      </div>
+      <div class="badge-match">
+        <span class="badge-dot"></span>
+        <span>Live AR</span>
+      </div>
     </header>
 
-    <!-- Target Scanner Reticle -->
-    <div id="reticle-container">
-      <div class="reticle-box">
-        <div class="reticle-corner top-left"></div>
-        <div class="reticle-corner top-right"></div>
-        <div class="reticle-corner bottom-left"></div>
-        <div class="reticle-corner bottom-right"></div>
-      </div>
+    <!-- Dimensions Badge -->
+    <div id="dim-badge" class="interactive">
+      🪑 Dimensions: 68cm W × 72cm D × 85cm H
     </div>
 
-    <!-- Desktop QR Code Only (Clean scan instructions) -->
+    <!-- Toolbar for AR Interaction -->
+    <div id="toolbar" class="interactive">
+      <button class="tool-btn active" id="btn-rotate-toggle" onclick="toggleAutoRotate()">
+        <span id="rotate-icon">⏸</span> <span id="rotate-text">Pause Spin</span>
+      </button>
+      <button class="tool-btn" id="btn-light-toggle" onclick="cycleLighting()">
+        💡 <span id="light-text">Warm Room</span>
+      </button>
+      <button class="tool-btn" onclick="resetChairTransform()">
+        ↺ Reset Position
+      </button>
+    </div>
+
+    <!-- Desktop QR Scanner Overlay -->
     <div id="hero-card-wrapper" class="desktop-only">
       <div class="hero-card">
-        <h2>Call The Magician</h2>
-        <p style="margin-bottom: 12px;">Scan the QR code with your <strong>Phone Camera</strong> to view the Magician in AR!</p>
-        <div style="margin: 8px 0; background: #ffffff; padding: 10px; border-radius: 16px; display: inline-block;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://chaami-hewage.github.io/webAR/" alt="Scan to open WebAR on Phone" style="width: 160px; height: 160px; display: block; margin: 0 auto;">
+        <span class="tag">AR Furniture Matcher</span>
+        <h2>Does this Chair match your house?</h2>
+        <p>Scan this QR code with your phone camera to place the <strong>J-Toastie Designer Chair</strong> directly in your room!</p>
+        
+        <div class="qr-box">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://chaami-hewage.github.io/webAR/"
+            alt="Scan QR code to test chair in AR">
         </div>
+
+        <p style="font-size: 0.78rem; color: #a1a1aa; margin-top: 8px;">
+          Gesture Controls: 1 finger drag to move/rotate • 2 finger pinch to scale
+        </p>
+
+        <button class="btn-primary" onclick="dismissHeroCard()">Interactive Desktop Preview</button>
       </div>
     </div>
 
     <!-- Footer Attribution -->
     <footer class="interactive">
-      3D Asset: <a href="https://poly.pizza/m/8KU4S7I0sL8" target="_blank" rel="noopener noreferrer">'Little Man' by Don
-        Carson</a> (CC-BY via Poly Pizza)
+      3D Chair Model: <a href="https://poly.pizza/m/3ST0yaOUNJ" target="_blank" rel="noopener noreferrer">Chair by J-Toastie</a> (CC-BY via Poly Pizza)
     </footer>
   </div>
 
-  <!-- A-Frame WebAR Scene (Markerless Screen AR) -->
-  <a-scene embedded 
+  <!-- A-Frame WebAR Scene -->
+  <a-scene embedded
     arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;"
-    vr-mode-ui="enabled: false" 
+    vr-mode-ui="enabled: false"
     renderer="alpha: true; logarithmicDepthBuffer: true; colorManagement: true; antialias: true;">
 
     <!-- Asset Management -->
     <a-assets timeout="10000">
-      <a-asset-item id="littleManModel" src="little_man.glb"></a-asset-item>
+      <a-asset-item id="chairModel" src="chair.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Ambient & Warm Directional Lighting -->
-    <a-entity light="type: ambient; color: #fff5e6; intensity: 1.8"></a-entity>
-    <a-entity light="type: directional; color: #ffd700; intensity: 2.2; castShadow: true" position="2 4 2"></a-entity>
-    <a-entity light="type: directional; color: #ff8c00; intensity: 1.2" position="-2 2 -2"></a-entity>
+    <!-- Dynamic Room Lighting -->
+    <a-entity id="ambient-light" light="type: ambient; color: #fff5e6; intensity: 1.8"></a-entity>
+    <a-entity id="main-light" light="type: directional; color: #ffd700; intensity: 2.2; castShadow: true" position="2 4 2"></a-entity>
+    <a-entity id="fill-light" light="type: directional; color: #ff8c00; intensity: 1.2" position="-2 2 -2"></a-entity>
 
-    <!-- Interactive 3D Magician Entity (Direct in Camera View, Gesture Controlled) -->
-    <a-entity id="magician-container" position="0 -0.8 -2.5">
-      <!-- 3D Magician -->
-      <a-entity id="magician" gltf-model="#littleManModel" scale="1.5 1.5 1.5" position="0 0.05 0" rotation="0 0 0">
+    <!-- Interactive 3D Chair Entity -->
+    <a-entity id="chair-container" position="0 -0.6 -2.2">
+      <!-- 3D Chair Model -->
+      <a-entity id="chair" gltf-model="#chairModel" scale="1.2 1.2 1.2" position="0 0 0" rotation="0 0 0">
       </a-entity>
 
-      <!-- Warm Golden Light Glow -->
-      <a-light type="point" color="#ffd700" intensity="2" distance="4" position="0 1 0"></a-light>
+      <!-- Warm Interior Floor Glow -->
+      <a-light type="point" color="#d4a373" intensity="1.5" distance="3" position="0 0.5 0"></a-light>
     </a-entity>
 
     <!-- AR Camera -->
     <a-entity camera></a-entity>
   </a-scene>
 
-  <!-- Interactive Gesture Controls Script (Touch drag to move/rotate, pinch to scale) -->
+  <!-- Interactive Gesture Controls & Custom Functions Script -->
   <script>
-    const magicianContainer = document.getElementById('magician-container');
-    const magician = document.getElementById('magician');
+    const chairContainer = document.getElementById('chair-container');
+    const chair = document.getElementById('chair');
+    const ambientLight = document.getElementById('ambient-light');
+    const mainLight = document.getElementById('main-light');
 
     let isDragging = false;
     let previousTouchX = 0;
     let previousTouchY = 0;
     let initialPinchDistance = null;
-    let currentScale = 1.5;
+    let currentScale = 1.2;
     let currentRotationY = 0;
     let posX = 0;
-    let posY = -0.8;
+    let posY = -0.6;
 
-    // Auto rotate toggle variable
+    // Auto rotate state
     let autoRotate = true;
 
     function animateAutoRotate() {
-      if (autoRotate && magician) {
-        currentRotationY += 0.5;
-        magician.setAttribute('rotation', `0 ${currentRotationY} 0`);
+      if (autoRotate && chair) {
+        currentRotationY += 0.4;
+        chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
       }
       requestAnimationFrame(animateAutoRotate);
     }
     animateAutoRotate();
 
-    // Touch Event Listeners for Mobile & Laptop Mouse
+    function toggleAutoRotate() {
+      autoRotate = !autoRotate;
+      const rotateIcon = document.getElementById('rotate-icon');
+      const rotateText = document.getElementById('rotate-text');
+      const btn = document.getElementById('btn-rotate-toggle');
+
+      if (autoRotate) {
+        rotateIcon.innerText = '⏸';
+        rotateText.innerText = 'Pause Spin';
+        btn.classList.add('active');
+      } else {
+        rotateIcon.innerText = '▶';
+        rotateText.innerText = 'Spin Chair';
+        btn.classList.remove('active');
+      }
+    }
+
+    // Lighting Presets Cycling
+    const lightingModes = [
+      { name: "Warm Room", ambient: "#fff5e6", intensity: 1.8, main: "#ffd700" },
+      { name: "Daylight", ambient: "#ffffff", intensity: 2.2, main: "#ffffff" },
+      { name: "Cozy Evening", ambient: "#ffaa66", intensity: 1.4, main: "#ff7700" }
+    ];
+    let currentLightIndex = 0;
+
+    function cycleLighting() {
+      currentLightIndex = (currentLightIndex + 1) % lightingModes.length;
+      const mode = lightingModes[currentLightIndex];
+      ambientLight.setAttribute('light', `type: ambient; color: ${mode.ambient}; intensity: ${mode.intensity}`);
+      mainLight.setAttribute('light', `type: directional; color: ${mode.main}; intensity: 2.0`);
+      document.getElementById('light-text').innerText = mode.name;
+    }
+
+    function resetChairTransform() {
+      currentScale = 1.2;
+      currentRotationY = 0;
+      posX = 0;
+      posY = -0.6;
+      chairContainer.setAttribute('position', `${posX} ${posY} -2.2`);
+      chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
+      chair.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+    }
+
+    function dismissHeroCard() {
+      const heroWrapper = document.getElementById('hero-card-wrapper');
+      if (heroWrapper) {
+        heroWrapper.classList.add('dismissed');
+      }
+    }
+
+    // Touch Event Listeners for Mobile & Mouse Dragging
     window.addEventListener('touchstart', (e) => {
-      autoRotate = false; // pause auto rotation when user interacts
+      autoRotate = false;
+      updateRotateButtonUIState();
       if (e.touches.length === 1) {
         isDragging = true;
         previousTouchX = e.touches[0].clientX;
         previousTouchY = e.touches[0].clientY;
       } else if (e.touches.length === 2) {
-        // Pinch zoom start
         initialPinchDistance = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
@@ -423,28 +542,24 @@
         const deltaX = e.touches[0].clientX - previousTouchX;
         const deltaY = e.touches[0].clientY - previousTouchY;
 
-        // One-finger drag: Rotate horizontally, shift vertically
         currentRotationY += deltaX * 0.5;
         posY -= deltaY * 0.003;
-
-        // Clamp Y position within comfortable view
         posY = Math.max(-2.0, Math.min(1.0, posY));
 
-        magician.setAttribute('rotation', `0 ${currentRotationY} 0`);
-        magicianContainer.setAttribute('position', `${posX} ${posY} -2.5`);
+        chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
+        chairContainer.setAttribute('position', `${posX} ${posY} -2.2`);
 
         previousTouchX = e.touches[0].clientX;
         previousTouchY = e.touches[0].clientY;
       } else if (e.touches.length === 2 && initialPinchDistance) {
-        // Two-finger pinch: Scale 3D Magician
         const newPinchDistance = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
         const factor = newPinchDistance / initialPinchDistance;
 
-        currentScale = Math.max(0.4, Math.min(4.0, currentScale * factor));
-        magician.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+        currentScale = Math.max(0.3, Math.min(4.0, currentScale * factor));
+        chair.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
 
         initialPinchDistance = newPinchDistance;
       }
@@ -462,7 +577,9 @@
     let mouseX = 0;
 
     window.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.interactive')) return;
       autoRotate = false;
+      updateRotateButtonUIState();
       isMouseDown = true;
       mouseX = e.clientX;
     });
@@ -471,7 +588,7 @@
       if (isMouseDown) {
         const deltaX = e.clientX - mouseX;
         currentRotationY += deltaX * 0.5;
-        magician.setAttribute('rotation', `0 ${currentRotationY} 0`);
+        chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
         mouseX = e.clientX;
       }
     });
@@ -479,9 +596,21 @@
     window.addEventListener('mouseup', () => { isMouseDown = false; });
 
     window.addEventListener('wheel', (e) => {
-      currentScale = Math.max(0.4, Math.min(4.0, currentScale + (e.deltaY > 0 ? -0.1 : 0.1)));
-      magician.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+      currentScale = Math.max(0.3, Math.min(4.0, currentScale + (e.deltaY > 0 ? -0.1 : 0.1)));
+      chair.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
     });
+
+    function updateRotateButtonUIState() {
+      const rotateIcon = document.getElementById('rotate-icon');
+      const rotateText = document.getElementById('rotate-text');
+      const btn = document.getElementById('btn-rotate-toggle');
+      if (rotateIcon && rotateText && btn) {
+        rotateIcon.innerText = '▶';
+        rotateText.innerText = 'Spin Chair';
+        btn.classList.remove('active');
+      }
+    }
   </script>
 </body>
+
 </html>
