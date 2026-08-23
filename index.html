@@ -455,8 +455,6 @@
     let previousTouchY = 0;
     let initialPinchDistance = null;
     let currentScale = 1.2;
-    let currentRotationX = 0;
-    let currentRotationY = 0;
     let posX = 0;
     let posY = -0.6;
 
@@ -464,13 +462,30 @@
     let autoRotate = true;
 
     function animateAutoRotate() {
-      if (autoRotate && chair) {
-        currentRotationY += 0.4;
-        chair.setAttribute('rotation', `${currentRotationX} ${currentRotationY} 0`);
+      if (autoRotate && chair && chair.object3D) {
+        const q = new THREE.Quaternion();
+        q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0.008);
+        chair.object3D.quaternion.premultiply(q);
       }
       requestAnimationFrame(animateAutoRotate);
     }
     animateAutoRotate();
+
+    // Free 3D Trackball Rotation in ANY direction (360 degrees, full 6DOF feel)
+    function rotateChairFree(deltaX, deltaY) {
+      if (!chair || !chair.object3D) return;
+      const deltaMove = Math.hypot(deltaX, deltaY);
+      if (deltaMove === 0) return;
+
+      const rotationSpeed = 0.008;
+      const angle = deltaMove * rotationSpeed;
+
+      // Calculate axis perpendicular to drag vector in screen space
+      const axis = new THREE.Vector3(deltaY, deltaX, 0).normalize();
+      const q = new THREE.Quaternion();
+      q.setFromAxisAngle(axis, angle);
+      chair.object3D.quaternion.premultiply(q);
+    }
 
     // Fix mobile camera aspect ratio distortion (prevents stretching/squishing)
     function fixCameraAspect() {
@@ -524,12 +539,12 @@
 
     function resetChairTransform() {
       currentScale = 1.2;
-      currentRotationX = 0;
-      currentRotationY = 0;
       posX = 0;
       posY = -0.6;
       chairContainer.setAttribute('position', `${posX} ${posY} -2.2`);
-      chair.setAttribute('rotation', `0 0 0`);
+      if (chair && chair.object3D) {
+        chair.object3D.quaternion.set(0, 0, 0, 1);
+      }
       chair.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
     }
 
@@ -561,11 +576,8 @@
         const deltaX = e.touches[0].clientX - previousTouchX;
         const deltaY = e.touches[0].clientY - previousTouchY;
 
-        // 2-Axis 3D Rotation: Horizontal drag rotates Left/Right (Yaw), Vertical drag tilts Up/Down (Pitch)
-        currentRotationY += deltaX * 0.5;
-        currentRotationX += deltaY * 0.5;
-
-        chair.setAttribute('rotation', `${currentRotationX} ${currentRotationY} 0`);
+        // Free 360° 3D Trackball Rotation in ANY direction
+        rotateChairFree(deltaX, deltaY);
 
         previousTouchX = e.touches[0].clientX;
         previousTouchY = e.touches[0].clientY;
@@ -609,10 +621,9 @@
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
 
-        currentRotationY += deltaX * 0.5;
-        currentRotationX += deltaY * 0.5;
+        // Free 360° 3D Trackball Rotation in ANY direction
+        rotateChairFree(deltaX, deltaY);
 
-        chair.setAttribute('rotation', `${currentRotationX} ${currentRotationY} 0`);
         mouseX = e.clientX;
         mouseY = e.clientY;
       }
