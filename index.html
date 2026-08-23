@@ -5,9 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <title>HAUS & ROOM AR | Furniture Room Matcher</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Does it echo the vibe of your home? | AR Visualizer</title>
   <meta name="description"
-    content="Check if the J-Toastie designer chair matches your home interior with real-time WebAR visualizer.">
+    content="Does it echo the vibe of your home? Place the J-Toastie designer chair directly in your room in real-time WebAR.">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -116,9 +119,9 @@
 
     .brand-info h1 {
       font-family: var(--font-heading);
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       background: linear-gradient(135deg, #ffffff 0%, var(--accent-warm) 60%, var(--accent-bronze) 100%);
       -webkit-background-clip: text;
@@ -160,7 +163,9 @@
       position: absolute;
       bottom: 75px;
       display: flex;
-      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
       background: var(--glass-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -168,21 +173,22 @@
       padding: 8px 14px;
       border-radius: 40px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      max-width: 90vw;
     }
 
     .tool-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #ffffff;
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 20px;
       font-family: var(--font-body);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.25s ease;
     }
 
@@ -191,6 +197,61 @@
       color: #12100e;
       border-color: var(--accent-warm);
       box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Floating Position Movement D-Pad Controller */
+    #move-pad {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      padding: 10px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      align-items: center;
+    }
+
+    .pad-title {
+      font-size: 0.62rem;
+      color: var(--accent-warm);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .pad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 34px);
+      grid-template-rows: repeat(3, 34px);
+      gap: 4px;
+    }
+
+    .pad-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .pad-btn:active {
+      background: var(--accent-bronze);
+      color: #12100e;
+      transform: scale(0.92);
     }
 
     /* Dimensions badge */
@@ -261,7 +322,7 @@
 
     .hero-card h2 {
       font-family: var(--font-heading);
-      font-size: 1.7rem;
+      font-size: 1.65rem;
       color: #ffffff;
       margin-bottom: 10px;
       line-height: 1.25;
@@ -361,7 +422,7 @@
     <header class="interactive">
       <div class="brand-info">
         <h1>HAUS & ROOM AR</h1>
-        <p>Furniture House Matcher Visualizer</p>
+        <p>Does it echo the vibe of your home?</p>
       </div>
       <div class="badge-match">
         <span class="badge-dot"></span>
@@ -374,33 +435,52 @@
       🪑 Dimensions: 68cm W × 72cm D × 85cm H
     </div>
 
+    <!-- Floating Position Pad for Moving Chair Anywhere -->
+    <div id="move-pad" class="interactive">
+      <div class="pad-title">Position</div>
+      <div class="pad-grid">
+        <div></div>
+        <button class="pad-btn" title="Move Up" onclick="moveChair(0, 0.15, 0)">⬆</button>
+        <div></div>
+        <button class="pad-btn" title="Move Left" onclick="moveChair(-0.15, 0, 0)">⬅</button>
+        <button class="pad-btn" title="Closer" onclick="moveChair(0, 0, 0.2)">🔍+</button>
+        <button class="pad-btn" title="Move Right" onclick="moveChair(0.15, 0, 0)">➔</button>
+        <div></div>
+        <button class="pad-btn" title="Move Down" onclick="moveChair(0, -0.15, 0)">⬇</button>
+        <button class="pad-btn" title="Further" onclick="moveChair(0, 0, -0.2)">🔍-</button>
+      </div>
+    </div>
+
     <!-- Toolbar for AR Interaction -->
     <div id="toolbar" class="interactive">
-      <button class="tool-btn active" id="btn-rotate-toggle" onclick="toggleAutoRotate()">
-        <span id="rotate-icon">⏸</span> <span id="rotate-text">Pause Spin</span>
+      <button class="tool-btn active" id="btn-drag-mode" onclick="toggleDragMode()">
+        <span id="drag-mode-icon">🖐</span> <span id="drag-mode-text">Mode: Move</span>
+      </button>
+      <button class="tool-btn" id="btn-rotate-toggle" onclick="toggleAutoRotate()">
+        <span id="rotate-icon">⏸</span> <span id="rotate-text">Spin</span>
       </button>
       <button class="tool-btn" id="btn-light-toggle" onclick="cycleLighting()">
-        💡 <span id="light-text">Warm Room</span>
+        💡 <span id="light-text">Warm</span>
       </button>
       <button class="tool-btn" onclick="resetChairTransform()">
-        ↺ Reset Position
+        ↺ Reset
       </button>
     </div>
 
     <!-- Desktop QR Scanner Overlay -->
     <div id="hero-card-wrapper" class="desktop-only">
       <div class="hero-card">
-        <span class="tag">AR Furniture Matcher</span>
+        <span class="tag">Home Vibe Matcher</span>
         <h2>Does it echo the vibe of your home?</h2>
         <p>Scan this QR code with your phone camera to place the <strong>J-Toastie Designer Chair</strong> directly in your room!</p>
-        
+
         <div class="qr-box">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://chaami-hewage.github.io/webAR/"
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://chaami-hewage.github.io/webAR/?v=2"
             alt="Scan QR code to test chair in AR">
         </div>
 
         <p style="font-size: 0.78rem; color: #a1a1aa; margin-top: 8px;">
-          Gesture Controls: 1 finger drag to move/rotate • 2 finger pinch to scale
+          Controls: Drag to Move/Rotate • Use Position D-Pad to move up/down/anywhere
         </p>
 
         <button class="btn-primary" onclick="dismissHeroCard()">Interactive Desktop Preview</button>
@@ -443,7 +523,7 @@
     <a-entity camera></a-entity>
   </a-scene>
 
-  <!-- Interactive Gesture Controls & Custom Functions Script -->
+  <!-- Interactive Gesture Controls & Position Logic Script -->
   <script>
     const chairContainer = document.getElementById('chair-container');
     const chair = document.getElementById('chair');
@@ -455,11 +535,40 @@
     let previousTouchY = 0;
     let initialPinchDistance = null;
     let currentScale = 1.2;
+    
+    // Position state (Up, Down, Left, Right, Forward, Back)
     let posX = 0;
     let posY = -0.6;
+    let posZ = -2.2;
 
-    // Auto rotate state
-    let autoRotate = true;
+    // Interaction Drag Modes: 'move' (Translate in 3D) or 'spin' (360 Rotate)
+    let dragMode = 'move';
+    let autoRotate = false;
+
+    function moveChair(dx, dy, dz) {
+      posX += dx;
+      posY += dy;
+      posZ += dz;
+      chairContainer.setAttribute('position', `${posX.toFixed(2)} ${posY.toFixed(2)} ${posZ.toFixed(2)}`);
+    }
+
+    function toggleDragMode() {
+      const modeBtn = document.getElementById('btn-drag-mode');
+      const icon = document.getElementById('drag-mode-icon');
+      const text = document.getElementById('drag-mode-text');
+
+      if (dragMode === 'move') {
+        dragMode = 'spin';
+        icon.innerText = '🔄';
+        text.innerText = 'Mode: Spin';
+        modeBtn.classList.remove('active');
+      } else {
+        dragMode = 'move';
+        icon.innerText = '🖐';
+        text.innerText = 'Mode: Move';
+        modeBtn.classList.add('active');
+      }
+    }
 
     function animateAutoRotate() {
       if (autoRotate && chair && chair.object3D) {
@@ -471,7 +580,7 @@
     }
     animateAutoRotate();
 
-    // Free 3D Trackball Rotation in ANY direction (360 degrees, full 6DOF feel)
+    // Free 3D Trackball Rotation in ANY direction (360 degrees)
     function rotateChairFree(deltaX, deltaY) {
       if (!chair || !chair.object3D) return;
       const deltaMove = Math.hypot(deltaX, deltaY);
@@ -480,7 +589,6 @@
       const rotationSpeed = 0.008;
       const angle = deltaMove * rotationSpeed;
 
-      // Calculate axis perpendicular to drag vector in screen space
       const axis = new THREE.Vector3(deltaY, deltaX, 0).normalize();
       const q = new THREE.Quaternion();
       q.setFromAxisAngle(axis, angle);
@@ -507,25 +615,22 @@
     function toggleAutoRotate() {
       autoRotate = !autoRotate;
       const rotateIcon = document.getElementById('rotate-icon');
-      const rotateText = document.getElementById('rotate-text');
       const btn = document.getElementById('btn-rotate-toggle');
 
       if (autoRotate) {
         rotateIcon.innerText = '⏸';
-        rotateText.innerText = 'Pause Spin';
         btn.classList.add('active');
       } else {
         rotateIcon.innerText = '▶';
-        rotateText.innerText = 'Spin Chair';
         btn.classList.remove('active');
       }
     }
 
     // Lighting Presets Cycling
     const lightingModes = [
-      { name: "Warm Room", ambient: "#fff5e6", intensity: 1.8, main: "#ffd700" },
+      { name: "Warm", ambient: "#fff5e6", intensity: 1.8, main: "#ffd700" },
       { name: "Daylight", ambient: "#ffffff", intensity: 2.2, main: "#ffffff" },
-      { name: "Cozy Evening", ambient: "#ffaa66", intensity: 1.4, main: "#ff7700" }
+      { name: "Cozy", ambient: "#ffaa66", intensity: 1.4, main: "#ff7700" }
     ];
     let currentLightIndex = 0;
 
@@ -541,7 +646,8 @@
       currentScale = 1.2;
       posX = 0;
       posY = -0.6;
-      chairContainer.setAttribute('position', `${posX} ${posY} -2.2`);
+      posZ = -2.2;
+      chairContainer.setAttribute('position', `${posX} ${posY} ${posZ}`);
       if (chair && chair.object3D) {
         chair.object3D.quaternion.set(0, 0, 0, 1);
       }
@@ -557,8 +663,6 @@
 
     // Touch Event Listeners for Mobile & Mouse Dragging
     window.addEventListener('touchstart', (e) => {
-      autoRotate = false;
-      updateRotateButtonUIState();
       if (e.touches.length === 1) {
         isDragging = true;
         previousTouchX = e.touches[0].clientX;
@@ -576,8 +680,15 @@
         const deltaX = e.touches[0].clientX - previousTouchX;
         const deltaY = e.touches[0].clientY - previousTouchY;
 
-        // Free 360° 3D Trackball Rotation in ANY direction
-        rotateChairFree(deltaX, deltaY);
+        if (dragMode === 'move') {
+          // Translate chair in X and Y axis directly from touch drag
+          posX += deltaX * 0.005;
+          posY -= deltaY * 0.005;
+          chairContainer.setAttribute('position', `${posX.toFixed(2)} ${posY.toFixed(2)} ${posZ.toFixed(2)}`);
+        } else {
+          // 360° Free rotation
+          rotateChairFree(deltaX, deltaY);
+        }
 
         previousTouchX = e.touches[0].clientX;
         previousTouchY = e.touches[0].clientY;
@@ -609,8 +720,6 @@
 
     window.addEventListener('mousedown', (e) => {
       if (e.target.closest('.interactive')) return;
-      autoRotate = false;
-      updateRotateButtonUIState();
       isMouseDown = true;
       mouseX = e.clientX;
       mouseY = e.clientY;
@@ -621,8 +730,13 @@
         const deltaX = e.clientX - mouseX;
         const deltaY = e.clientY - mouseY;
 
-        // Free 360° 3D Trackball Rotation in ANY direction
-        rotateChairFree(deltaX, deltaY);
+        if (dragMode === 'move') {
+          posX += deltaX * 0.005;
+          posY -= deltaY * 0.005;
+          chairContainer.setAttribute('position', `${posX.toFixed(2)} ${posY.toFixed(2)} ${posZ.toFixed(2)}`);
+        } else {
+          rotateChairFree(deltaX, deltaY);
+        }
 
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -635,17 +749,6 @@
       currentScale = Math.max(0.3, Math.min(4.0, currentScale + (e.deltaY > 0 ? -0.1 : 0.1)));
       chair.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
     });
-
-    function updateRotateButtonUIState() {
-      const rotateIcon = document.getElementById('rotate-icon');
-      const rotateText = document.getElementById('rotate-text');
-      const btn = document.getElementById('btn-rotate-toggle');
-      if (rotateIcon && rotateText && btn) {
-        rotateIcon.innerText = '▶';
-        rotateText.innerText = 'Spin Chair';
-        btn.classList.remove('active');
-      }
-    }
   </script>
 </body>
 
