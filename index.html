@@ -455,6 +455,7 @@
     let previousTouchY = 0;
     let initialPinchDistance = null;
     let currentScale = 1.2;
+    let currentRotationX = 0;
     let currentRotationY = 0;
     let posX = 0;
     let posY = -0.6;
@@ -465,11 +466,28 @@
     function animateAutoRotate() {
       if (autoRotate && chair) {
         currentRotationY += 0.4;
-        chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
+        chair.setAttribute('rotation', `${currentRotationX} ${currentRotationY} 0`);
       }
       requestAnimationFrame(animateAutoRotate);
     }
     animateAutoRotate();
+
+    // Fix mobile camera aspect ratio distortion (prevents stretching/squishing)
+    function fixCameraAspect() {
+      const scene = document.querySelector('a-scene');
+      if (scene && scene.camera) {
+        scene.camera.aspect = window.innerWidth / window.innerHeight;
+        scene.camera.updateProjectionMatrix();
+      }
+    }
+    window.addEventListener('resize', fixCameraAspect);
+    window.addEventListener('orientationchange', fixCameraAspect);
+    document.addEventListener('DOMContentLoaded', () => {
+      const scene = document.querySelector('a-scene');
+      if (scene) {
+        scene.addEventListener('loaded', fixCameraAspect);
+      }
+    });
 
     function toggleAutoRotate() {
       autoRotate = !autoRotate;
@@ -506,11 +524,12 @@
 
     function resetChairTransform() {
       currentScale = 1.2;
+      currentRotationX = 0;
       currentRotationY = 0;
       posX = 0;
       posY = -0.6;
       chairContainer.setAttribute('position', `${posX} ${posY} -2.2`);
-      chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
+      chair.setAttribute('rotation', `0 0 0`);
       chair.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
     }
 
@@ -542,12 +561,11 @@
         const deltaX = e.touches[0].clientX - previousTouchX;
         const deltaY = e.touches[0].clientY - previousTouchY;
 
+        // 2-Axis 3D Rotation: Horizontal drag rotates Left/Right (Yaw), Vertical drag tilts Up/Down (Pitch)
         currentRotationY += deltaX * 0.5;
-        posY -= deltaY * 0.003;
-        posY = Math.max(-2.0, Math.min(1.0, posY));
+        currentRotationX += deltaY * 0.5;
 
-        chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
-        chairContainer.setAttribute('position', `${posX} ${posY} -2.2`);
+        chair.setAttribute('rotation', `${currentRotationX} ${currentRotationY} 0`);
 
         previousTouchX = e.touches[0].clientX;
         previousTouchY = e.touches[0].clientY;
@@ -575,6 +593,7 @@
     // Laptop Mouse Drag & Scroll Support
     let isMouseDown = false;
     let mouseX = 0;
+    let mouseY = 0;
 
     window.addEventListener('mousedown', (e) => {
       if (e.target.closest('.interactive')) return;
@@ -582,14 +601,20 @@
       updateRotateButtonUIState();
       isMouseDown = true;
       mouseX = e.clientX;
+      mouseY = e.clientY;
     });
 
     window.addEventListener('mousemove', (e) => {
       if (isMouseDown) {
         const deltaX = e.clientX - mouseX;
+        const deltaY = e.clientY - mouseY;
+
         currentRotationY += deltaX * 0.5;
-        chair.setAttribute('rotation', `0 ${currentRotationY} 0`);
+        currentRotationX += deltaY * 0.5;
+
+        chair.setAttribute('rotation', `${currentRotationX} ${currentRotationY} 0`);
         mouseX = e.clientX;
+        mouseY = e.clientY;
       }
     });
 
